@@ -25,6 +25,8 @@
 #pragma once
 
 #include "ofMain.h"
+#include "Poco/String.h"
+#include "Poco/UTF8String.h"
 #include <set>
 
 #include "alphanum.hpp"
@@ -36,11 +38,31 @@ int ofxCharAt(const string& s0, unsigned int pos);
 
 int ofxStringCompareAlphaNum(const string& s0, const string& s1);
 
-int ofxStringCompare(const string& s0, const string& s1, bool ignoreCase = false);
-int ofxStringCompareIgnoreCase(const string& s0, const string& s1);
+int ofxStringLexographicCompare(const string& s0, const string& s1, bool ignoreCase = false);
 
-bool ofxStringEquals(const string& s0, const string& s1, bool ignoreCase = false);
-bool ofxStringEqualsIgnoreCase(const string& s0, const string& s1);
+inline int ofxStringCompare(const string& s0, const string& s1, bool ignoreCase = false) {
+    if(ignoreCase) {
+        return Poco::UTF8::icompare(s0,s1);
+    } else {
+        return s0.compare(s1);
+    }
+}
+
+inline int ofxStringCompareIgnoreCase(const string& s0, const string& s1) {
+    return ofxStringCompare(s0,s1,true);
+}
+
+inline bool ofxStringEquals(const string& s0, const string& s1, bool ignoreCase = false) {
+    if(ignoreCase) {
+        return Poco::UTF8::icompare(s0,s1) == 0;
+    } else {
+        return s0.compare(s1) == 0;
+    }
+}
+
+inline bool ofxStringEqualsIgnoreCase(const string& s0, const string& s1) {
+    return ofxStringEquals(s0,s1,true);
+}
 
 bool ofxStringEndsWith(const string& input, const string& endsWith, bool ignoreCase = false);
 bool ofxStringEndsWithIgnoreCase(const string& input, const string& endsWith);
@@ -118,8 +140,11 @@ string ofxStringRemoveWhitespaceInPlace(string& input);
 string ofxStringRemove(const string& input, const string& regex, const string& replacement);
 string ofxStringRemoveInPlace(string& input, string& regex, const string& replacement);
 
-string ofxStringRemoveStart(const string& input, const string& regex, const string& replacement);
-string ofxStringRemoveStartInPlace(string& input, string& regex, const string& replacement);
+string ofxStringRemove(const string& input, const string& regex, const string& replacement);
+string ofxStringRemoveInPlace(string& input, string& regex, const string& replacement);
+
+string ofxStringRemoveStartNth(const string& input, const string& regex, const string& replacement);
+string ofxStringRemoveStartNthInPlace(string& input, string& regex, const string& replacement);
 
 string ofxStringRemoveStartIgnoreCase(const string& input, const string& regex, const string& replacement);
 string ofxStringRemoveStartIgnoreCaseInPlace(string& input, string& regex, const string& replacement);
